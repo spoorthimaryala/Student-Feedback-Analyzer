@@ -1,0 +1,775 @@
+import csv
+import os
+import matplotlib.pyplot as plt
+from datetime import datetime
+
+STUDENT_FILE = "students.csv"
+TEACHER_FILE = "teachers.csv"
+FEEDBACK_FILE = "feedback.csv"
+
+departments = ["CSE", "CSM", "ECE"]
+
+sections = ["A", "B", "C", "D"]
+
+faculty = {
+
+    "CSE": {
+
+        "A": [
+            "Dr. Kumar",
+            "Mrs. Priya",
+            "Mr. Ramesh",
+            "Dr. Sandeep",
+            "Mrs. Lakshmi",
+            "Mr. Vinod"
+        ],
+
+        "B": [
+            "Dr. Rajesh",
+            "Mrs. Swathi",
+            "Mr. Kiran",
+            "Dr. Naveen",
+            "Mrs. Anjali",
+            "Mr. Mahesh"
+        ],
+
+        "C": [
+            "Dr. Prakash",
+            "Mrs. Deepa",
+            "Mr. Ajay",
+            "Dr. Rohit",
+            "Mrs. Meena",
+            "Mr. Sanjay"
+        ],
+
+        "D": [
+            "Dr. Aravind",
+            "Mrs. Kavitha",
+            "Mr. Hari",
+            "Dr. Manish",
+            "Mrs. Shalini",
+            "Mr. Naresh"
+        ]
+    },
+
+    "CSM": {
+
+        "A": [
+            "Dr. Anitha",
+            "Mr. Suresh",
+            "Mrs. Divya",
+            "Dr. Harsha",
+            "Mrs. Rekha",
+            "Mr. Tarun"
+        ],
+
+        "B": [
+            "Dr. Bhaskar",
+            "Mrs. Pooja",
+            "Mr. Vikas",
+            "Dr. Teja",
+            "Mrs. Nandini",
+            "Mr. Rohit"
+        ],
+
+        "C": [
+            "Dr. Chaitanya",
+            "Mrs. Swetha",
+            "Mr. Abhishek",
+            "Dr. Karthik",
+            "Mrs. Asha",
+            "Mr. Varun"
+        ],
+
+        "D": [
+            "Dr. Dinesh",
+            "Mrs. Radhika",
+            "Mr. Akhil",
+            "Dr. Sai",
+            "Mrs. Harini",
+            "Mr. Vivek"
+        ]
+    },
+
+    "ECE": {
+
+        "A": [
+            "Dr. Rao",
+            "Mrs. Kavya",
+            "Mr. Arun",
+            "Dr. Rakesh",
+            "Mrs. Sushma",
+            "Mr. Aditya"
+        ],
+
+        "B": [
+            "Dr. Praveen",
+            "Mrs. Neha",
+            "Mr. Rohit",
+            "Dr. Vinay",
+            "Mrs. Jyothi",
+            "Mr. Abhinav"
+        ],
+
+        "C": [
+            "Dr. Srikanth",
+            "Mrs. Swathi",
+            "Mr. Nikhil",
+            "Dr. Ganesh",
+            "Mrs. Priyanka",
+            "Mr. Rahul"
+        ],
+
+        "D": [
+            "Dr. Venkat",
+            "Mrs. Anusha",
+            "Mr. Surya",
+            "Dr. Tejas",
+            "Mrs. Divya",
+            "Mr. Koushik"
+        ]
+    }
+}
+
+def create_students():
+
+    if os.path.exists(STUDENT_FILE):
+        return
+
+    with open(STUDENT_FILE, "w", newline="") as file:
+
+        writer = csv.writer(file)
+
+        writer.writerow([
+            "ID",
+            "Password",
+            "Department",
+            "Section"
+        ])
+
+        for dept in departments:
+
+            for i in range(1, 201):
+
+                student_id = dept + str(1000 + i)
+
+                password = student_id + "@123"
+
+                if i <= 50:
+                    section = "A"
+
+                elif i <= 100:
+                    section = "B"
+
+                elif i <= 150:
+                    section = "C"
+
+                else:
+                    section = "D"
+
+                writer.writerow([
+                    student_id,
+                    password,
+                    dept,
+                    section
+                ])
+
+    print("600 student records created.")
+    print("200 students per branch.")
+    print("50 students per section.")
+
+def create_teachers():
+
+    if os.path.exists(TEACHER_FILE):
+        return
+
+    with open(TEACHER_FILE, "w", newline="") as file:
+
+        writer = csv.writer(file)
+
+        writer.writerow([
+            "ID",
+            "Password",
+            "Department",
+            "Section",
+            "Faculty"
+        ])
+
+        for dept in departments:
+
+            for section in sections:
+
+                for i, name in enumerate(
+                    faculty[dept][section],
+                    start=1
+                ):
+
+                    teacher_id = (
+                        dept.lower()
+                        + section.lower()
+                        + str(i).zfill(2)
+                    )
+
+                    password = teacher_id + "@123"
+
+                    writer.writerow([
+                        teacher_id,
+                        password,
+                        dept,
+                        section,
+                        name
+                    ])
+
+    print("72 teacher accounts created.")
+
+def create_feedback_file():
+
+    if not os.path.exists(FEEDBACK_FILE):
+
+        with open(
+            FEEDBACK_FILE,
+            "w",
+            newline=""
+        ) as file:
+
+            writer = csv.writer(file)
+
+            writer.writerow([
+                "Department",
+                "Section",
+                "Faculty",
+                "Rating",
+                "Comment",
+                "Date"
+            ])
+
+        print("Feedback file created.")
+
+def student_login():
+
+    student_id = input(
+        "Enter Student ID: "
+    ).strip()
+
+    password = input(
+        "Enter Password: "
+    ).strip()
+
+    with open(
+        STUDENT_FILE,
+        "r",
+        newline=""
+    ) as file:
+
+        reader = csv.DictReader(file)
+
+        for student in reader:
+
+            if (
+                student["ID"] == student_id
+                and
+                student["Password"] == password
+            ):
+
+                print(
+                    "\nStudent login successful!"
+                )
+
+                print(
+                    "Department:",
+                    student["Department"]
+                )
+
+                print(
+                    "Section:",
+                    student["Section"]
+                )
+
+                return student
+
+    print(
+        "Invalid ID or password."
+    )
+
+    return None
+
+def submit_feedback(student):
+
+    dept = student["Department"]
+
+    section = student["Section"]
+
+    print("\n================================")
+    print("       FACULTY FEEDBACK")
+    print("================================")
+
+    print(
+        "Department:",
+        dept
+    )
+
+    print(
+        "Section:",
+        section
+    )
+
+    print("--------------------------------")
+
+    section_faculty = faculty[dept][section]
+
+    for teacher_name in section_faculty:
+
+        print("\n--------------------------------")
+
+        print(
+            "Faculty:",
+            teacher_name
+        )
+
+        print("--------------------------------")
+
+        try:
+
+            rating = int(
+                input(
+                    "Enter rating (1 to 5): "
+                )
+            )
+
+            if rating < 1 or rating > 5:
+
+                print(
+                    "Rating must be between 1 and 5."
+                )
+
+                print(
+                    "Feedback for this faculty "
+                    "was not submitted."
+                )
+
+                continue
+
+            comment = input(
+                "Enter feedback: "
+            ).strip()
+
+            if not comment:
+
+                print(
+                    "Feedback cannot be empty."
+                )
+
+                print(
+                    "Feedback for this faculty "
+                    "was not submitted."
+                )
+
+                continue
+
+            with open(
+                FEEDBACK_FILE,
+                "a",
+                newline=""
+            ) as file:
+
+                writer = csv.writer(file)
+
+                writer.writerow([
+                    dept,
+                    section,
+                    teacher_name,
+                    rating,
+                    comment,
+                    datetime.now().strftime(
+                        "%Y-%m-%d %H:%M"
+                    )
+                ])
+
+            print(
+                "Feedback submitted for",
+                teacher_name
+            )
+
+        except ValueError:
+
+            print(
+                "Please enter a valid rating."
+            )
+
+    print("\n================================")
+
+    print(
+        "All faculty feedback completed!"
+    )
+
+    print(
+        "Your feedback is anonymous."
+    )
+
+    print("================================")
+
+def teacher_login():
+
+    teacher_id = input(
+        "Enter Teacher ID: "
+    ).strip()
+
+    password = input(
+        "Enter Password: "
+    ).strip()
+
+    with open(
+        TEACHER_FILE,
+        "r",
+        newline=""
+    ) as file:
+
+        reader = csv.DictReader(file)
+
+        for teacher in reader:
+
+            if (
+                teacher["ID"] == teacher_id
+                and
+                teacher["Password"] == password
+            ):
+
+                print(
+                    "\nTeacher login successful!"
+                )
+
+                print(
+                    "Faculty:",
+                    teacher["Faculty"]
+                )
+
+                print(
+                    "Department:",
+                    teacher["Department"]
+                )
+
+                print(
+                    "Section:",
+                    teacher["Section"]
+                )
+
+                return teacher
+
+    print(
+        "Invalid teacher ID or password."
+    )
+
+    return None
+
+def view_feedback(teacher):
+
+    dept = teacher["Department"]
+
+    section = teacher["Section"]
+
+    teacher_name = teacher["Faculty"]
+
+    records = []
+
+    with open(
+        FEEDBACK_FILE,
+        "r",
+        newline=""
+    ) as file:
+
+        reader = csv.DictReader(file)
+
+        for row in reader:
+
+            if (
+                row["Department"] == dept
+                and
+                row["Section"] == section
+                and
+                row["Faculty"] == teacher_name
+            ):
+
+                records.append(row)
+
+    print(
+        "\nFeedback for",
+        teacher_name
+    )
+
+    print(
+        "Department:",
+        dept
+    )
+
+    print(
+        "Section:",
+        section
+    )
+
+    print("-" * 40)
+
+    if not records:
+
+        print(
+            "No feedback available yet."
+        )
+
+        return
+
+    ratings = []
+
+    for record in records:
+
+        rating = int(
+            record["Rating"]
+        )
+
+        ratings.append(rating)
+
+        print(
+            "Rating:",
+            rating,
+            "/5"
+        )
+
+        print(
+            "Comment:",
+            record["Comment"]
+        )
+
+        print(
+            "Date:",
+            record["Date"]
+        )
+
+        print("-" * 40)
+
+    average = (
+        sum(ratings)
+        /
+        len(ratings)
+    )
+
+    print(
+        "Total feedback:",
+        len(ratings)
+    )
+
+    print(
+        "Average rating:",
+        round(average, 2),
+        "/5"
+    )
+
+    rating_counts = [
+        ratings.count(i)
+        for i in range(1, 6)
+    ]
+
+    plt.figure(
+        figsize=(7, 4)
+    )
+
+    plt.bar(
+        [1, 2, 3, 4, 5],
+        rating_counts
+    )
+
+    plt.xlabel(
+        "Rating"
+    )
+
+    plt.ylabel(
+        "Number of Students"
+    )
+
+    plt.title(
+        teacher_name
+        + " - Rating Distribution"
+    )
+
+    plt.xticks(
+        [1, 2, 3, 4, 5]
+    )
+
+    plt.tight_layout()
+
+    plt.show()
+
+    plt.figure(
+        figsize=(6, 4)
+    )
+
+    plt.bar(
+        [teacher_name],
+        [average]
+    )
+
+    plt.xlabel(
+        "Faculty"
+    )
+
+    plt.ylabel(
+        "Average Rating"
+    )
+
+    plt.title(
+        "Average Feedback Rating"
+    )
+
+    plt.ylim(
+        0,
+        5
+    )
+
+    plt.tight_layout()
+
+    plt.show()
+
+def student_menu(student):
+
+    while True:
+
+        print(
+            "\n===== STUDENT MENU ====="
+        )
+
+        print(
+            "1. Submit Feedback"
+        )
+
+        print(
+            "2. Logout"
+        )
+
+        choice = input(
+            "Enter choice: "
+        )
+
+        if choice == "1":
+
+            submit_feedback(student)
+
+        elif choice == "2":
+
+            print(
+                "Logged out."
+            )
+
+            break
+
+        else:
+
+            print(
+                "Invalid choice."
+            )
+
+def teacher_menu(teacher):
+
+    while True:
+
+        print(
+            "\n===== TEACHER MENU ====="
+        )
+
+        print(
+            "1. View My Feedback"
+        )
+
+        print(
+            "2. Logout"
+        )
+
+        choice = input(
+            "Enter choice: "
+        )
+
+        if choice == "1":
+
+            view_feedback(teacher)
+
+        elif choice == "2":
+
+            print(
+                "Logged out."
+            )
+
+            break
+
+        else:
+
+            print(
+                "Invalid choice."
+            )
+
+def main():
+
+    create_students()
+
+    create_teachers()
+
+    create_feedback_file()
+
+    while True:
+
+        print(
+            "\n================================"
+        )
+
+        print(
+            "   STUDENT FEEDBACK SYSTEM"
+        )
+
+        print(
+            "================================"
+        )
+
+        print(
+            "1. Student Login"
+        )
+
+        print(
+            "2. Teacher Login"
+        )
+
+        print(
+            "3. Exit"
+        )
+
+        choice = input(
+            "Enter choice: "
+        )
+
+        if choice == "1":
+
+            student = student_login()
+
+            if student:
+
+                student_menu(student)
+
+        elif choice == "2":
+
+            teacher = teacher_login()
+
+            if teacher:
+
+                teacher_menu(teacher)
+
+        elif choice == "3":
+
+            print(
+                "Thank you for using the system!"
+            )
+
+            break
+
+        else:
+
+            print(
+                "Invalid choice."
+            )
+
+if __name__ == "__main__":
+
+    main()
